@@ -1,18 +1,13 @@
 #!/bin/bash
-#!/bin/bash
-
-
-
-#!/bin/bash
 
 # Objective: Extract Pokémon data from data.json and check for necessary conditions.
 
-# Define the JSON file
+# Define the JSON and script files
 JSON_FILE="data.json"
 SCRIPT_FILE="data_extraction_automation-0x01.sh"
 ERROR_FILE="errors.txt"
 
-# Check if the script file exists and is not empty
+# Check if the data_extraction_automation-0x01 file exists and is not empty
 if [[ ! -e $SCRIPT_FILE ]]; then
     echo "Error: '$SCRIPT_FILE' does not exist." >> $ERROR_FILE
     exit 1
@@ -31,6 +26,22 @@ fi
 
 if [[ ! -s $JSON_FILE ]]; then
     echo "Error: '$JSON_FILE' is empty." >> $ERROR_FILE
+    exit 1
+fi
+
+# Check if the script includes the necessary commands
+if ! grep -q 'jq' "$SCRIPT_FILE"; then
+    echo "Error: '$SCRIPT_FILE' does not use the 'jq' command." >> $ERROR_FILE
+    exit 1
+fi
+
+if ! grep -q 'awk' "$SCRIPT_FILE"; then
+    echo "Error: '$SCRIPT_FILE' does not use the 'awk' command." >> $ERROR_FILE
+    exit 1
+fi
+
+if ! grep -q 'sed' "$SCRIPT_FILE"; then
+    echo "Error: '$SCRIPT_FILE' does not use the 'sed' command." >> $ERROR_FILE
     exit 1
 fi
 
