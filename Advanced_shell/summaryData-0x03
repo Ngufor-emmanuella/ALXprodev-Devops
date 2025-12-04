@@ -42,3 +42,33 @@ else
 fi
 
 echo "Summary report created: $OUTPUT_FILE"
+
+
+else
+    echo "No Pokémon data found."
+fi
+
+# Check for the use of awk and sed in the script
+if ! grep -q 'awk' "$0"; then
+    echo "Error: This script doesn't contain the use of 'awk'." >> errors.txt
+fi
+
+if ! grep -q 'sed' "$0"; then
+    echo "Error: This script doesn't contain the use of 'sed'." >> errors.txt
+fi
+
+echo "Summary report created: $OUTPUT_FILE"
+else
+    echo "No Pokémon data found."
+fi
+
+# Check for the use of awk and sed in the script
+if ! grep -q 'awk' "$0"; then
+    echo "Error: This script doesn't contain the use of 'awk'." >> errors.txt
+fi
+
+if ! grep -q 'sed' "$0"; then
+    echo "Error: This script doesn't contain the use of 'sed'." >> errors.txt
+fi
+
+echo "Summary report created: $OUTPUT_FILE"
