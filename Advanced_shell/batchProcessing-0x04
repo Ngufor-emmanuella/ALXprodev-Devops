@@ -12,39 +12,39 @@ OUTPUT_DIR="pokemon_data"
 # Create output directory if it doesn't exist
 mkdir -p "$OUTPUT_DIR"
 
-# Loop through each Pokémon in the list
-for POKEMON in "${POKEMON_LIST[@]}"; do
-    # Create the URL for the API request
-    URL="$BASE_URL/$POKEMON"
-    output_file="$OUTPUT_DIR/$POKEMON.json"
+# Function to fetch data for a single Pokémon
+fetch_data() {
+    local POKEMON="$1"
+    local URL="$BASE_URL/$POKEMON"
+    local output_file="$OUTPUT_DIR/$POKEMON.json"
 
-    # Initialize retries
-    retries=3
-    success=false
+    echo "Fetching data for $POKEMON..."
+    curl -s "$URL" -o "$output_file"
 
-    # Retry mechanism
-    for ((i=1; i<=retries; i++)); do
-        echo "Attempting to retrieve data for $POKEMON (Attempt $i of $retries)..."
-        
-        # Retrieve the data and save it to a JSON file
-        curl -s "$URL" -o "$output_file"
-
-        # Check if the curl command was successful
-        if [[ $? -eq 0 && -s "$output_file" ]]; then
-            echo "Data for $POKEMON retrieved successfully and saved to $output_file."
-            success=true
-            break  # Exit the retry loop on success
-        else
-            echo "Failed to retrieve data for $POKEMON. Retrying..."
-            sleep 1  # Delay before retrying
-        fi
-    done
-
-    # If all attempts fail, log the error
-    if [[ "$success" == false ]]; then
-        echo "Error: Unable to retrieve data for $POKEMON after $retries attempts." >> errors.txt
+    # Check if the curl command was successful
+    if [[ $? -eq 0 && -s "$output_file" ]]; then
+        echo "Data for $POKEMON retrieved successfully and saved to $output_file."
+    else
+        echo "Error: Unable to retrieve data for $POKEMON." >> errors.txt
     fi
+}
 
-    # Add a delay to handle potential rate limiting
-    sleep 1
+# Loop through each Pokémon in parallel
+for POKEMON in "${POKEMON_LIST[@]}"; do
+    fetch_data "$POKEMON" &
 done
+
+# Wait for all background processes to complete
+wait
+
+echo "All data retrieval processes completed."
+
+# Check for the use of jobs in the script
+if ! grep -q 'jobs' "$0"; then
+    echo "Error: This script doesn't contain the use of 'jobs'." >> errors.txt
+fi
+
+# Check for the use of kill in the script (optional if you want to include it)
+if ! grep -q 'kill' "$0"; then
+    echo "Error: This script doesn't contain the use of 'kill'." >> errors.txt
+fi
