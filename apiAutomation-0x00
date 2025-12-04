@@ -1,0 +1,7 @@
+i
+# Define API endpoint and Pokémon name
+POKEMON_NAME="pikachu"
+API_URL="https://pokeapi.co/api/v2/pokemon/${POKEMON_NAME}"
+DATA_FILE="data.json"
+ERROR_FILE="errors.txt"
+API_AUTOMATION_FILE="apiAutomation-0x00"
