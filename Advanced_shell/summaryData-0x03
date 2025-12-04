@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# Directory containing JSON files
+JSON_DIR="."
+# Output CSV file
+OUTPUT_FILE="pokemon_summary.csv"
+
+# Create or clear the CSV report file
+echo "Name,Height,Weight" > "$OUTPUT_FILE"
+
+# Initialize height and weight totals and count
+total_height=0
+total_weight=0
+count=0
+
+# Loop through all JSON files in the directory
+for json_file in "$JSON_DIR"/*.json; do
+    # Extract name, height, and weight using jq
+    name=$(jq -r '.name' "$json_file")
+    height=$(jq -r '.height' "$json_file")
+    weight=$(jq -r '.weight' "$json_file")
+
+    # Append data to the CSV file
+    echo "$name,$height,$weight" >> "$OUTPUT_FILE"
+
+    # Update totals for average calculation
+    total_height=$((total_height + height))
+    total_weight=$((total_weight + weight))
+    count=$((count + 1))
+done
+
+# Check to avoid division by zero
+if [[ $count -gt 0 ]]; then
+    # Calculate averages using awk
+    average_height=$(awk "BEGIN {print $total_height/$count}")
+    average_weight=$(awk "BEGIN {print $total_weight/$count}")
+    
+    # Append averages to the report
+    echo "Average,$average_height,$average_weight" >> "$OUTPUT_FILE"
+else
+    echo "No Pokémon data found."
+fi
+
+echo "Summary report created: $OUTPUT_FILE"
